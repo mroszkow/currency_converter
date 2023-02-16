@@ -1,20 +1,19 @@
 import requests
 
-#currencies = {"USD":4.4463, "EUR":4.7847, "CHF":4.8519, "GPB":5.4193, "NOK":0.4412}
-currencies = ("USD", "EUR", "CHF", "GBP", "NOK")
+CURRENCIES = ("USD", "EUR", "CHF", "GBP", "NOK")
 
-def get_rate(code: str):
-    url = 'http://api.nbp.pl/api/exchangerates/rates/a/' + code + '/'
+
+def get_rate(code: str) -> float:
+    url = f"http://api.nbp.pl/api/exchangerates/ratezzz/a/{code}"
     response = requests.get(url)
-    if response.status_code == 200:  #raise InvalidURL ??? 
+    if response.status_code == 200: 
         rate = response.json()
         return rate['rates'][0]['mid']
     else:
-        print("Program can't get current currency rate!\n Try again.")
-        return
+        raise Exception("Invalid currency code")
 
 
-def check_input_amount():
+def fetch_input_amount():
     input_str = input("Enter an amout of money: \n")
     
     input_str = input_str.replace(",", ".")
@@ -26,23 +25,22 @@ def check_input_amount():
         return 
 
 
-def check_currency_code():
+def fetch_currency_code() -> str:
     input_code = input("Enter an currency_code: \n[USD, EUR, CHF, GBP, NOK] \n")
 
-    if input_code in currencies:
-        return input_code
-    else:
-        print("\nInvalid currency code!")
-        return 
+    if input_code not in CURRENCIES:
+        raise ValueError("Invalid currency code!")
+
+    return input_code
 
 
 def currency_converter():
-    amount = check_input_amount()
+    amount = fetch_input_amount()
     print("\n")
     if amount == None:
         return
 
-    rate_code = check_currency_code()
+    rate_code = fetch_currency_code()
     if rate_code == None:
         return
 
@@ -55,13 +53,6 @@ def currency_converter():
     print("\n")
     print(str(result) + ' PLN (Currency rate: ' + str(rate) + ')')    
 
-#currency_converter()
 
 if __name__ == "__main__":
-    condition = True
-    while condition:
-        currency_converter()
-
-        if_next = input("\n-----If you want to quit, type q. Otherwise press Enter----- \n")
-        if if_next == 'q':
-            condition = False
+    currency_converter()
